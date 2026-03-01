@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Filtri Foto</title>
+  <title>Fuji Sim</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -15,14 +15,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 16px 40px;
-      gap: 20px;
+      padding: 20px 16px 48px;
+      gap: 18px;
     }
 
     h1 {
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 600;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.14em;
       color: #fff;
       text-transform: uppercase;
     }
@@ -33,18 +33,17 @@
       max-width: 480px;
       border: 1.5px dashed #444;
       border-radius: 14px;
-      padding: 32px 20px;
+      padding: 36px 20px;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.2s;
     }
     #upload-area:hover { border-color: #888; }
-    #upload-area p { color: #666; font-size: 14px; margin-top: 8px; }
-    #upload-area svg { opacity: 0.5; }
+    #upload-area p { color: #555; font-size: 14px; margin-top: 10px; }
 
     #file-input { display: none; }
 
-    /* Preview canvas */
+    /* Canvas */
     #canvas-wrap {
       width: 100%;
       max-width: 480px;
@@ -60,62 +59,72 @@
     #profili {
       display: none;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       width: 100%;
       max-width: 480px;
     }
 
     .profilo-label {
-      font-size: 11px;
-      letter-spacing: 0.12em;
+      font-size: 10px;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #555;
-      margin-bottom: 2px;
+      color: #444;
     }
 
     .btn-group {
       display: flex;
-      gap: 8px;
+      gap: 7px;
     }
 
     .btn-profilo {
       flex: 1;
-      padding: 14px 8px;
-      border: 1.5px solid #333;
+      padding: 13px 4px 11px;
+      border: 1.5px solid #2a2a2a;
       border-radius: 10px;
-      background: #1a1a1a;
-      color: #ccc;
-      font-size: 12px;
+      background: #161616;
+      color: #999;
+      font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
       cursor: pointer;
       transition: all 0.15s;
       text-align: center;
+      line-height: 1.4;
     }
-    .btn-profilo:hover { border-color: #666; color: #fff; }
+    .btn-profilo span.tag {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: #444;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+    .btn-profilo:hover { border-color: #555; color: #ddd; }
     .btn-profilo.active {
-      border-color: #fff;
-      background: #fff;
+      border-color: #e0e0e0;
+      background: #e0e0e0;
       color: #000;
     }
+    .btn-profilo.active span.tag { color: #555; }
 
     .btn-originale {
       width: 100%;
-      padding: 12px;
-      border: 1.5px solid #2a2a2a;
+      padding: 11px;
+      border: 1.5px solid #1e1e1e;
       border-radius: 10px;
       background: transparent;
-      color: #555;
-      font-size: 12px;
-      letter-spacing: 0.06em;
+      color: #3a3a3a;
+      font-size: 11px;
+      letter-spacing: 0.08em;
       cursor: pointer;
       transition: all 0.15s;
+      text-transform: uppercase;
     }
-    .btn-originale:hover { border-color: #444; color: #999; }
-    .btn-originale.active { border-color: #555; color: #aaa; }
+    .btn-originale:hover { border-color: #333; color: #666; }
+    .btn-originale.active { border-color: #444; color: #777; }
 
-    /* Download */
-    #btn-download {
+    /* Bottone salva */
+    #btn-salva {
       display: none;
       width: 100%;
       max-width: 480px;
@@ -130,29 +139,52 @@
       letter-spacing: 0.02em;
       transition: opacity 0.15s;
     }
-    #btn-download:hover { opacity: 0.85; }
+    #btn-salva:hover { opacity: 0.85; }
+
+    /* Loading overlay */
+    #loading {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 10;
+    }
+    #loading.show { display: flex; }
+    #loading p { color: #ccc; font-size: 13px; letter-spacing: 0.06em; }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid #333;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     #reset {
-      font-size: 13px;
-      color: #444;
+      font-size: 12px;
+      color: #333;
       cursor: pointer;
       text-decoration: underline;
       display: none;
     }
-    #reset:hover { color: #777; }
+    #reset:hover { color: #666; }
   </style>
 </head>
 <body>
 
-<h1>Filtri Foto</h1>
+<h1>Fuji Film Sim</h1>
 
 <div id="upload-area" onclick="document.getElementById('file-input').click()">
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5">
+  <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5">
     <rect x="3" y="3" width="18" height="18" rx="3"/>
     <circle cx="8.5" cy="8.5" r="1.5"/>
     <polyline points="21 15 16 10 5 21"/>
   </svg>
-  <p>Tocca per caricare una foto</p>
+  <p>Tocca per scegliere una foto</p>
 </div>
 
 <input type="file" id="file-input" accept="image/*">
@@ -162,33 +194,55 @@
 </div>
 
 <div id="profili">
-  <div class="profilo-label">Scegli il profilo</div>
+  <div class="profilo-label">Film Simulation</div>
+
   <div class="btn-group">
-    <button class="btn-profilo" data-profilo="classic-chrome">Classic<br>Chrome</button>
-    <button class="btn-profilo" data-profilo="monochrome">Mono<br>Spinto</button>
-    <button class="btn-profilo" data-profilo="landscape">Land-<br>scape</button>
+    <button class="btn-profilo" data-profilo="velvia">
+      Velvia<span class="tag">Vivid</span>
+    </button>
+    <button class="btn-profilo" data-profilo="classic-chrome">
+      Classic<br>Chrome<span class="tag">Street</span>
+    </button>
+    <button class="btn-profilo" data-profilo="eterna">
+      Eterna<span class="tag">Cinema</span>
+    </button>
   </div>
+
+  <div class="btn-group">
+    <button class="btn-profilo" data-profilo="classic-neg">
+      Classic<br>Neg<span class="tag">Nostalgic</span>
+    </button>
+    <button class="btn-profilo" data-profilo="acros">
+      Acros<span class="tag">B&amp;W</span>
+    </button>
+  </div>
+
   <button class="btn-originale active" data-profilo="originale">Originale</button>
 </div>
 
-<button id="btn-download">Condividi / Salva in Foto</button>
+<button id="btn-salva">Condividi / Salva in Foto</button>
 <span id="reset">Carica un'altra foto</span>
 
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Elaborazione...</p>
+</div>
+
 <script>
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  const fileInput = document.getElementById('file-input');
-  const uploadArea = document.getElementById('upload-area');
-  const canvasWrap = document.getElementById('canvas-wrap');
-  const profiliDiv = document.getElementById('profili');
-  const btnDownload = document.getElementById('btn-download');
-  const resetBtn = document.getElementById('reset');
+  const canvas  = document.getElementById('canvas');
+  const ctx     = canvas.getContext('2d');
+  const fileInput   = document.getElementById('file-input');
+  const uploadArea  = document.getElementById('upload-area');
+  const canvasWrap  = document.getElementById('canvas-wrap');
+  const profiliDiv  = document.getElementById('profili');
+  const btnSalva    = document.getElementById('btn-salva');
+  const resetBtn    = document.getElementById('reset');
+  const loading     = document.getElementById('loading');
 
   let originalImageData = null;
-  let currentImg = null;
   let currentProfilo = 'originale';
 
-  // ── Caricamento immagine ──────────────────────────────────────────────────
+  // ── Caricamento ─────────────────────────────────────────────────────────
   fileInput.addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -196,8 +250,6 @@
     reader.onload = ev => {
       const img = new Image();
       img.onload = () => {
-        currentImg = img;
-        // Risoluzione max 3000px sul lato lungo
         const maxDim = 3000;
         let w = img.naturalWidth, h = img.naturalHeight;
         if (w > maxDim || h > maxDim) {
@@ -208,13 +260,12 @@
         ctx.drawImage(img, 0, 0, w, h);
         originalImageData = ctx.getImageData(0, 0, w, h);
 
-        uploadArea.style.display = 'none';
-        canvasWrap.style.display = 'block';
-        profiliDiv.style.display = 'flex';
-        btnDownload.style.display = 'block';
-        resetBtn.style.display = 'inline';
+        uploadArea.style.display  = 'none';
+        canvasWrap.style.display  = 'block';
+        profiliDiv.style.display  = 'flex';
+        btnSalva.style.display    = 'block';
+        resetBtn.style.display    = 'inline';
 
-        // reset selezione
         document.querySelectorAll('.btn-profilo').forEach(b => b.classList.remove('active'));
         document.querySelector('.btn-originale').classList.add('active');
         currentProfilo = 'originale';
@@ -230,184 +281,270 @@
       document.querySelectorAll('.btn-profilo, .btn-originale').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentProfilo = btn.dataset.profilo;
-      applicaFiltro(currentProfilo);
+      // defer per non bloccare il repaint del bottone
+      loading.classList.add('show');
+      setTimeout(() => {
+        applicaFiltro(currentProfilo);
+        loading.classList.remove('show');
+      }, 30);
     });
   });
 
   function applicaFiltro(profilo) {
     if (!originalImageData) return;
-    // Reimposta immagine originale
     const data = new Uint8ClampedArray(originalImageData.data);
     const imgData = new ImageData(data, canvas.width, canvas.height);
-
-    if (profilo === 'classic-chrome')  filtroClassicChrome(imgData.data);
-    else if (profilo === 'monochrome') filtroMonochrome(imgData.data);
-    else if (profilo === 'landscape')  filtroLandscape(imgData.data);
-
+    switch (profilo) {
+      case 'velvia':        filtroVelvia(imgData.data);       break;
+      case 'classic-chrome':filtroClassicChrome(imgData.data);break;
+      case 'eterna':        filtroEterna(imgData.data);       break;
+      case 'classic-neg':   filtroClassicNeg(imgData.data);   break;
+      case 'acros':         filtroAcros(imgData.data);        break;
+    }
     ctx.putImageData(imgData, 0, 0);
   }
 
-  // ── FILTRI ───────────────────────────────────────────────────────────────
+  // ── UTILITY ──────────────────────────────────────────────────────────────
 
-  // Utility: RGB <-> HSL
+  const clamp = v => v < 0 ? 0 : v > 255 ? 255 : Math.round(v);
+
+  function scurve(v, s) {
+    const n = v / 255;
+    return clamp((n + s * Math.sin(Math.PI * n) * (n - 0.5)) * 255);
+  }
+
   function rgbToHsl(r, g, b) {
     r /= 255; g /= 255; b /= 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    const max = Math.max(r,g,b), min = Math.min(r,g,b);
     let h, s, l = (max + min) / 2;
     if (max === min) { h = s = 0; }
     else {
       const d = max - min;
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
       switch (max) {
-        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-        case g: h = ((b - r) / d + 2) / 6; break;
-        case b: h = ((r - g) / d + 4) / 6; break;
+        case r: h = ((g-b)/d + (g<b?6:0)) / 6; break;
+        case g: h = ((b-r)/d + 2) / 6; break;
+        case b: h = ((r-g)/d + 4) / 6; break;
       }
     }
     return [h, s, l];
   }
 
   function hslToRgb(h, s, l) {
-    let r, g, b;
-    if (s === 0) { r = g = b = l; }
-    else {
-      const hue2rgb = (p, q, t) => {
-        if (t < 0) t += 1; if (t > 1) t -= 1;
-        if (t < 1/6) return p + (q - p) * 6 * t;
-        if (t < 1/2) return q;
-        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-        return p;
-      };
-      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      const p = 2 * l - q;
-      r = hue2rgb(p, q, h + 1/3);
-      g = hue2rgb(p, q, h);
-      b = hue2rgb(p, q, h - 1/3);
+    if (s === 0) { const v = Math.round(l*255); return [v,v,v]; }
+    const q = l < 0.5 ? l*(1+s) : l+s-l*s, p = 2*l-q;
+    const hue = (p, q, t) => {
+      if (t<0) t+=1; if (t>1) t-=1;
+      if (t<1/6) return p+(q-p)*6*t;
+      if (t<1/2) return q;
+      if (t<2/3) return p+(q-p)*(2/3-t)*6;
+      return p;
+    };
+    return [Math.round(hue(p,q,h+1/3)*255), Math.round(hue(p,q,h)*255), Math.round(hue(p,q,h-1/3)*255)];
+  }
+
+  // Mescola verso grigio per desaturare
+  function desat(r, g, b, amount) {
+    const l = 0.299*r + 0.587*g + 0.114*b;
+    return [r + (l-r)*amount, g + (l-g)*amount, b + (l-b)*amount];
+  }
+
+  // ── 1. VELVIA ────────────────────────────────────────────────────────────
+  // Colori potentissimi, alto contrasto, ombre ricche, verdi giallo-verdi,
+  // cieli più profondi. Il film più iconico per paesaggi.
+  function filtroVelvia(d) {
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i+1], b = d[i+2];
+
+      // Contrasto forte
+      r = scurve(r, 0.22);
+      g = scurve(g, 0.22);
+      b = scurve(b, 0.22);
+
+      let [h, s, l] = rgbToHsl(r, g, b);
+
+      // Saturazione molto alta
+      s = Math.min(1, s * 1.65);
+
+      // Verdi (erba/foglie) → più saturi e spostati verso il giallo-verde
+      if (h >= 0.22 && h <= 0.42) {
+        h -= 0.015; // shift verso giallo-verde
+        s = Math.min(1, s * 1.15);
+        l *= 0.96;
+      }
+      // Blu cielo → più profondi
+      if (h >= 0.54 && h <= 0.70) {
+        s = Math.min(1, s * 1.20);
+        l *= 0.90;
+      }
+      // Rossi/arancioni → caldi e vividi
+      if (h < 0.08 || h > 0.92) {
+        s = Math.min(1, s * 1.10);
+      }
+
+      [r, g, b] = hslToRgb(h, s, l);
+      d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
     }
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
   }
 
-  // Clamp 0-255
-  const clamp = v => Math.max(0, Math.min(255, Math.round(v)));
-
-  // Curva S leggera
-  function scurve(v, strength) {
-    const n = v / 255;
-    const curved = n + strength * Math.sin(Math.PI * n) * (n - 0.5);
-    return clamp(curved * 255);
-  }
-
-  // ── 1. CLASSIC CHROME ────────────────────────────────────────────────────
-  // Toni opachi, lift delle ombre, leggero cast freddo, desaturazione parziale
+  // ── 2. CLASSIC CHROME ────────────────────────────────────────────────────
+  // Toni opachi, lift delle ombre, ombre fredde/teal, alteluci calde,
+  // desaturazione morbida. Street e reportage.
   function filtroClassicChrome(d) {
     for (let i = 0; i < d.length; i += 4) {
       let r = d[i], g = d[i+1], b = d[i+2];
 
-      // Lift ombre (fade/matte look) — alza il nero
-      r = r * 0.85 + 22;
-      g = g * 0.85 + 20;
-      b = b * 0.85 + 28; // ombre leggermente più fredde
+      // Fade/matte: lift del nero con cast freddo nelle ombre
+      r = r * 0.82 + 24;
+      g = g * 0.82 + 22;
+      b = b * 0.82 + 32;
 
-      // Desaturazione parziale (~35%)
-      const luma = 0.299*r + 0.587*g + 0.114*b;
-      r = r * 0.65 + luma * 0.35;
-      g = g * 0.65 + luma * 0.35;
-      b = b * 0.65 + luma * 0.35;
+      // Desaturazione ~28%
+      [r, g, b] = desat(r, g, b, 0.28);
 
-      // Leggera curva S per micro-contrasto
-      r = scurve(r, 0.08);
-      g = scurve(g, 0.08);
-      b = scurve(b, 0.08);
+      // Micro-contrasto
+      r = scurve(r, 0.07); g = scurve(g, 0.07); b = scurve(b, 0.07);
 
-      // Tono verde/teal nelle mezzotinte
-      const br = (r + g + b) / 3 / 255;
-      if (br > 0.3 && br < 0.7) {
-        g += 3;
-        b += 4;
-        r -= 2;
+      const luma = (r + g + b) / 3 / 255;
+
+      // Ombre fredde (teal)
+      if (luma < 0.45) {
+        g += (0.45 - luma) * 8;
+        b += (0.45 - luma) * 14;
+        r -= (0.45 - luma) * 6;
+      }
+      // Alteluci leggermente calde
+      if (luma > 0.60) {
+        r += (luma - 0.60) * 10;
+        g += (luma - 0.60) * 4;
+        b -= (luma - 0.60) * 6;
       }
 
-      d[i]   = clamp(r);
-      d[i+1] = clamp(g);
-      d[i+2] = clamp(b);
+      d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
     }
   }
 
-  // ── 2. MONOCHROME SPINTO ─────────────────────────────────────────────────
-  // B&W alto contrasto, curve S marcata, micro-grana
-  function filtroMonochrome(d) {
+  // ── 3. ETERNA CINEMA ────────────────────────────────────────────────────
+  // Flat look cinematografico, lift pesante, saturazione bassa,
+  // ombre blu-verdi, alteluci calde ambrate. Usato per video/film.
+  function filtroEterna(d) {
     for (let i = 0; i < d.length; i += 4) {
       let r = d[i], g = d[i+1], b = d[i+2];
 
-      // Conversione luma con pesi classici
-      let luma = 0.299*r + 0.587*g + 0.114*b;
+      // Lift molto pronunciato (look da cinema)
+      r = r * 0.70 + 50;
+      g = g * 0.70 + 46;
+      b = b * 0.70 + 55;
 
-      // Curva S aggressiva per contrasto
-      luma = scurve(luma, 0.28);
+      // Desaturazione forte ~42%
+      [r, g, b] = desat(r, g, b, 0.42);
 
-      // Micro-grana
-      const grain = (Math.random() - 0.5) * 10;
-      luma = clamp(luma + grain);
+      // Contrasto morbidissimo
+      r = scurve(r, 0.04); g = scurve(g, 0.04); b = scurve(b, 0.04);
+
+      const luma = (r + g + b) / 3 / 255;
+
+      // Ombre blu-verdi (teal cinematografico)
+      if (luma < 0.50) {
+        const str = (0.50 - luma);
+        g += str * 10;
+        b += str * 18;
+        r -= str * 8;
+      }
+      // Alteluci ambrate/calde
+      if (luma > 0.62) {
+        const str = (luma - 0.62);
+        r += str * 24;
+        g += str * 10;
+        b -= str * 12;
+      }
+
+      d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+    }
+  }
+
+  // ── 4. CLASSIC NEG ──────────────────────────────────────────────────────
+  // Nostalgia anni '70-'80: ombre dense, alteluci sbiadite, cast arancio-caldo,
+  // contrasto alternato (ombre contrastate, luci piatte). Street e ritratti.
+  function filtroClassicNeg(d) {
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i+1], b = d[i+2];
+
+      // Comprimi le alteluci (sbiadimento vintage)
+      r = r * 0.88 + 14;
+      g = g * 0.88 + 12;
+      b = b * 0.88 + 10;
+
+      // Desaturazione lieve ~15%
+      [r, g, b] = desat(r, g, b, 0.15);
+
+      const luma = (r + g + b) / 3 / 255;
+
+      // Ombre: più contrastate e leggermente fredde
+      if (luma < 0.40) {
+        const str = (0.40 - luma);
+        r -= str * 10;
+        g -= str * 8;
+        b -= str * 4;
+      }
+      // Cast arancio/ambrato nelle mezzotinte
+      if (luma >= 0.35 && luma <= 0.75) {
+        r += 6;
+        g += 2;
+        b -= 5;
+      }
+      // Alteluci: leggero calore
+      if (luma > 0.72) {
+        r += (luma - 0.72) * 16;
+        b -= (luma - 0.72) * 10;
+      }
+
+      // Curva S leggera (ombre)
+      r = scurve(r, 0.09); g = scurve(g, 0.09); b = scurve(b, 0.09);
+
+      d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+    }
+  }
+
+  // ── 5. ACROS ────────────────────────────────────────────────────────────
+  // Il B&W più raffinato di Fuji: conversione con mix canali caratteristico
+  // (verdi più chiari, blu più scuri), neri ricchi, grana fine autentica.
+  function filtroAcros(d) {
+    // Pre-calcola tabella grana statica per evitare flickering
+    const grainTable = new Float32Array(d.length / 4);
+    for (let k = 0; k < grainTable.length; k++) {
+      grainTable[k] = (Math.random() - 0.5) * 13;
+    }
+
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i+1], b = d[i+2];
+
+      // Mix canali Acros: peso verde alto (cielo e foglie diversi),
+      // blu più basso (cieli più scuri, profondità)
+      let luma = 0.33*r + 0.57*g + 0.10*b;
+
+      // Curva S media: neri ricchi, bianchi puliti
+      luma = scurve(luma, 0.18);
+
+      // Grana fine (statica per pixel)
+      luma = clamp(luma + grainTable[i >> 2]);
 
       d[i] = d[i+1] = d[i+2] = luma;
     }
   }
 
-  // ── 3. LANDSCAPE ─────────────────────────────────────────────────────────
-  // Saturazione alta, verdi potenziati, cielo/blu vivido, contrasto moderato
-  function filtroLandscape(d) {
-    for (let i = 0; i < d.length; i += 4) {
-      let r = d[i], g = d[i+1], b = d[i+2];
-
-      // Curva S leggera (microcontrasto)
-      r = scurve(r, 0.12);
-      g = scurve(g, 0.12);
-      b = scurve(b, 0.12);
-
-      // Converti in HSL per modificare saturazione e tonalità
-      let [h, s, l] = rgbToHsl(r, g, b);
-
-      // Boost saturazione generale +35%
-      s = Math.min(1, s * 1.35);
-
-      // Boost verdi (h ≈ 0.20–0.45) → erba, foglie
-      if (h >= 0.20 && h <= 0.45) {
-        s = Math.min(1, s * 1.20);
-        l = Math.max(0, l * 0.95); // leggermente più scuri
-      }
-
-      // Boost blu cielo (h ≈ 0.55–0.72)
-      if (h >= 0.55 && h <= 0.72) {
-        s = Math.min(1, s * 1.25);
-        l = Math.max(0, l * 0.92);
-      }
-
-      [r, g, b] = hslToRgb(h, s, l);
-
-      d[i]   = clamp(r);
-      d[i+1] = clamp(g);
-      d[i+2] = clamp(b);
-    }
-  }
-
-  // ── Salva / Condividi ────────────────────────────────────────────────────
-  btnDownload.addEventListener('click', () => {
+  // ── Salva / Share ────────────────────────────────────────────────────────
+  btnSalva.addEventListener('click', () => {
     const suffix = currentProfilo === 'originale' ? 'originale' : currentProfilo;
-    const filename = `foto_${suffix}.jpg`;
-
     canvas.toBlob(blob => {
-      // iOS Safari 15+: Web Share API → apre foglio condivisione → "Salva immagine"
-      if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: 'image/jpeg' })] })) {
-        const file = new File([blob], filename, { type: 'image/jpeg' });
-        navigator.share({ files: [file], title: filename })
-          .catch(() => {}); // l'utente ha annullato
+      const file = new File([blob], `fuji_${suffix}.jpg`, { type: 'image/jpeg' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: `Fuji ${suffix}` }).catch(() => {});
       } else {
-        // Fallback desktop: download diretto
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = url;
-        link.click();
+        const a = document.createElement('a');
+        a.download = `fuji_${suffix}.jpg`;
+        a.href = url; a.click();
         URL.revokeObjectURL(url);
       }
     }, 'image/jpeg', 0.94);
@@ -418,10 +555,9 @@
     uploadArea.style.display = 'block';
     canvasWrap.style.display = 'none';
     profiliDiv.style.display = 'none';
-    btnDownload.style.display = 'none';
-    resetBtn.style.display = 'none';
+    btnSalva.style.display   = 'none';
+    resetBtn.style.display   = 'none';
     originalImageData = null;
-    currentImg = null;
     fileInput.value = '';
   });
 </script>
