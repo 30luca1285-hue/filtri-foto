@@ -163,7 +163,7 @@
 </head>
 <body>
 
-<h1>Film Simulation <span style="font-size:10px;letter-spacing:0.08em;color:#444;font-weight:400">v1.2</span></h1>
+<h1>Film Simulation <span style="font-size:10px;letter-spacing:0.08em;color:#444;font-weight:400">v1.3</span></h1>
 
 <div id="upload-area" onclick="document.getElementById('file-input').click()">
   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5">
@@ -441,11 +441,11 @@
 
       [r, g, b] = hslToRgb(h, s, l);
 
-      // Cast dorato globale nelle mezzotinte
+      // Cast dorato globale nelle mezzotinte (gradiente morbido, senza banding)
       const luma = (r+g+b)/3/255;
-      if (luma > 0.3 && luma < 0.8) {
-        r += 7; g += 3; b -= 6;
-      }
+      const t = Math.max(0, Math.min(1, (luma - 0.15) / 0.70));
+      const castStr = Math.sin(Math.PI * t);
+      r += 7 * castStr; g += 3 * castStr; b -= 6 * castStr;
 
       d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
     }
