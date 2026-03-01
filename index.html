@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Fuji Sim</title>
+  <title>Film Sim</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -44,27 +44,27 @@
     #canvas-wrap { width: 100%; max-width: 480px; display: none; }
     canvas { width: 100%; border-radius: 10px; display: block; }
 
-    /* Profili */
     #profili {
       display: none;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
       width: 100%;
       max-width: 480px;
     }
 
-    .profilo-label {
-      font-size: 10px;
-      letter-spacing: 0.14em;
+    .section-label {
+      font-size: 9px;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #444;
+      color: #383838;
+      padding-left: 1px;
     }
 
     .btn-group { display: flex; gap: 7px; }
 
     .btn-profilo {
       flex: 1;
-      padding: 13px 4px 11px;
+      padding: 13px 6px 11px;
       border: 1.5px solid #2a2a2a;
       border-radius: 10px;
       background: #161616;
@@ -80,22 +80,32 @@
     .btn-profilo span.tag {
       display: block;
       font-size: 9px;
-      letter-spacing: 0.08em;
-      color: #444;
-      margin-top: 2px;
+      letter-spacing: 0.07em;
+      color: #3a3a3a;
+      margin-top: 3px;
       text-transform: uppercase;
     }
     .btn-profilo:hover { border-color: #555; color: #ddd; }
     .btn-profilo.active { border-color: #e0e0e0; background: #e0e0e0; color: #000; }
-    .btn-profilo.active span.tag { color: #555; }
+    .btn-profilo.active span.tag { color: #666; }
+
+    /* badge marca */
+    .btn-profilo span.brand {
+      display: block;
+      font-size: 8px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+      opacity: 0.5;
+    }
 
     .btn-originale {
       width: 100%;
-      padding: 11px;
+      padding: 10px;
       border: 1.5px solid #1e1e1e;
       border-radius: 10px;
       background: transparent;
-      color: #3a3a3a;
+      color: #333;
       font-size: 11px;
       letter-spacing: 0.08em;
       cursor: pointer;
@@ -104,64 +114,6 @@
     }
     .btn-originale:hover { border-color: #333; color: #666; }
     .btn-originale.active { border-color: #444; color: #777; }
-
-    /* Slider intensità */
-    #slider-wrap {
-      width: 100%;
-      max-width: 480px;
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .slider-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .slider-header span:first-child {
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #444;
-    }
-    #slider-value {
-      font-size: 12px;
-      font-weight: 600;
-      color: #888;
-      min-width: 36px;
-      text-align: right;
-    }
-
-    #intensita {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 3px;
-      border-radius: 2px;
-      background: #2a2a2a;
-      outline: none;
-      cursor: pointer;
-    }
-    #intensita::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #fff;
-      cursor: pointer;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.6);
-    }
-    #intensita::-moz-range-thumb {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #fff;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.6);
-    }
 
     #btn-salva {
       display: none;
@@ -184,7 +136,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.72);
       align-items: center;
       justify-content: center;
       flex-direction: column;
@@ -192,9 +144,9 @@
       z-index: 10;
     }
     #loading.show { display: flex; }
-    #loading p { color: #ccc; font-size: 13px; letter-spacing: 0.06em; }
+    #loading p { color: #aaa; font-size: 12px; letter-spacing: 0.08em; }
     .spinner {
-      width: 32px; height: 32px;
+      width: 30px; height: 30px;
       border: 2px solid #333;
       border-top-color: #fff;
       border-radius: 50%;
@@ -203,21 +155,18 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     #reset {
-      font-size: 12px;
-      color: #333;
-      cursor: pointer;
-      text-decoration: underline;
-      display: none;
+      font-size: 12px; color: #2e2e2e;
+      cursor: pointer; text-decoration: underline; display: none;
     }
     #reset:hover { color: #666; }
   </style>
 </head>
 <body>
 
-<h1>Fuji Film Sim</h1>
+<h1>Film Simulation</h1>
 
 <div id="upload-area" onclick="document.getElementById('file-input').click()">
-  <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5">
     <rect x="3" y="3" width="18" height="18" rx="3"/>
     <circle cx="8.5" cy="8.5" r="1.5"/>
     <polyline points="21 15 16 10 5 21"/>
@@ -232,7 +181,8 @@
 </div>
 
 <div id="profili">
-  <div class="profilo-label">Film Simulation</div>
+
+  <div class="section-label">Fujifilm</div>
   <div class="btn-group">
     <button class="btn-profilo" data-profilo="velvia">
       Velvia<span class="tag">Vivid</span>
@@ -249,15 +199,18 @@
       Acros<span class="tag">B&amp;W</span>
     </button>
   </div>
-  <button class="btn-originale active" data-profilo="originale">Originale</button>
-</div>
 
-<div id="slider-wrap">
-  <div class="slider-header">
-    <span>Intensità</span>
-    <span id="slider-value">100%</span>
+  <div class="section-label" style="margin-top:4px">OM System</div>
+  <div class="btn-group">
+    <button class="btn-profilo" data-profilo="nostalgic-summer">
+      Nostalgic Summer<span class="tag">Warm · Vintage</span>
+    </button>
+    <button class="btn-profilo" data-profilo="om-chrome">
+      OM-Chrome<span class="tag">Slide · Urban</span>
+    </button>
   </div>
-  <input type="range" id="intensita" min="0" max="100" value="100">
+
+  <button class="btn-originale active" data-profilo="originale">Originale</button>
 </div>
 
 <button id="btn-salva">Condividi / Salva in Foto</button>
@@ -275,15 +228,11 @@
   const uploadArea = document.getElementById('upload-area');
   const canvasWrap = document.getElementById('canvas-wrap');
   const profiliDiv = document.getElementById('profili');
-  const sliderWrap = document.getElementById('slider-wrap');
-  const slider     = document.getElementById('intensita');
-  const sliderVal  = document.getElementById('slider-value');
   const btnSalva   = document.getElementById('btn-salva');
   const resetBtn   = document.getElementById('reset');
   const loading    = document.getElementById('loading');
 
-  let originalImageData = null; // pixel originali
-  let filteredImageData = null; // pixel filtro al 100%
+  let originalImageData = null;
   let currentProfilo = 'originale';
 
   // ── Caricamento ──────────────────────────────────────────────────────────
@@ -303,20 +252,16 @@
         canvas.width = w; canvas.height = h;
         ctx.drawImage(img, 0, 0, w, h);
         originalImageData = ctx.getImageData(0, 0, w, h);
-        filteredImageData = null;
 
         uploadArea.style.display = 'none';
         canvasWrap.style.display = 'block';
         profiliDiv.style.display = 'flex';
         btnSalva.style.display   = 'block';
         resetBtn.style.display   = 'inline';
-        sliderWrap.style.display = 'none'; // nascosto finché non si sceglie un filtro
 
         document.querySelectorAll('.btn-profilo').forEach(b => b.classList.remove('active'));
         document.querySelector('.btn-originale').classList.add('active');
         currentProfilo = 'originale';
-        slider.value = 100;
-        sliderVal.textContent = '100%';
       };
       img.src = ev.target.result;
     };
@@ -329,59 +274,29 @@
       document.querySelectorAll('.btn-profilo, .btn-originale').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentProfilo = btn.dataset.profilo;
-
       if (currentProfilo === 'originale') {
-        filteredImageData = null;
         ctx.putImageData(originalImageData, 0, 0);
-        sliderWrap.style.display = 'none';
         return;
       }
-
       loading.classList.add('show');
-      setTimeout(() => {
-        // Calcola filtro al 100% e lo salva
-        const data = new Uint8ClampedArray(originalImageData.data);
-        const imgData = new ImageData(data, canvas.width, canvas.height);
-        applicaFiltro(currentProfilo, imgData.data);
-        filteredImageData = imgData;
-
-        // Applica con l'intensità corrente dello slider
-        blend(slider.value / 100);
-        sliderWrap.style.display = 'flex';
-        loading.classList.remove('show');
-      }, 30);
+      setTimeout(() => { applicaFiltro(currentProfilo); loading.classList.remove('show'); }, 30);
     });
   });
 
-  function applicaFiltro(profilo, d) {
+  function applicaFiltro(profilo) {
+    if (!originalImageData) return;
+    const data = new Uint8ClampedArray(originalImageData.data);
+    const imgData = new ImageData(data, canvas.width, canvas.height);
     switch (profilo) {
-      case 'velvia':         filtroVelvia(d);        break;
-      case 'classic-chrome': filtroClassicChrome(d); break;
-      case 'classic-neg':    filtroClassicNeg(d);    break;
-      case 'acros':          filtroAcros(d);         break;
+      case 'velvia':           filtroVelvia(imgData.data);          break;
+      case 'classic-chrome':   filtroClassicChrome(imgData.data);   break;
+      case 'classic-neg':      filtroClassicNeg(imgData.data);      break;
+      case 'acros':            filtroAcros(imgData.data);           break;
+      case 'nostalgic-summer': filtroNostalgicSummer(imgData.data); break;
+      case 'om-chrome':        filtroOmChrome(imgData.data);        break;
     }
+    ctx.putImageData(imgData, 0, 0);
   }
-
-  // Blend tra originale e filtrato — velocissimo, nessun ricalcolo filtro
-  function blend(t) {
-    if (!originalImageData || !filteredImageData) return;
-    const orig = originalImageData.data;
-    const filt = filteredImageData.data;
-    const out  = new Uint8ClampedArray(orig.length);
-    for (let i = 0; i < orig.length; i += 4) {
-      out[i]   = orig[i]   + (filt[i]   - orig[i])   * t;
-      out[i+1] = orig[i+1] + (filt[i+1] - orig[i+1]) * t;
-      out[i+2] = orig[i+2] + (filt[i+2] - orig[i+2]) * t;
-      out[i+3] = 255;
-    }
-    ctx.putImageData(new ImageData(out, canvas.width, canvas.height), 0, 0);
-  }
-
-  // ── Slider ───────────────────────────────────────────────────────────────
-  slider.addEventListener('input', () => {
-    sliderVal.textContent = slider.value + '%';
-    if (filteredImageData) blend(slider.value / 100);
-  });
 
   // ── UTILITY ──────────────────────────────────────────────────────────────
   const clamp = v => v < 0 ? 0 : v > 255 ? 255 : Math.round(v);
@@ -426,7 +341,7 @@
     return [r + (l-r)*amount, g + (l-g)*amount, b + (l-b)*amount];
   }
 
-  // ── FILTRI ───────────────────────────────────────────────────────────────
+  // ── FUJIFILM ─────────────────────────────────────────────────────────────
 
   function filtroVelvia(d) {
     for (let i = 0; i < d.length; i += 4) {
@@ -434,9 +349,9 @@
       r = scurve(r, 0.22); g = scurve(g, 0.22); b = scurve(b, 0.22);
       let [h, s, l] = rgbToHsl(r, g, b);
       s = Math.min(1, s * 1.65);
-      if (h >= 0.22 && h <= 0.42) { h -= 0.015; s = Math.min(1, s * 1.15); l *= 0.96; }
-      if (h >= 0.54 && h <= 0.70) { s = Math.min(1, s * 1.20); l *= 0.90; }
-      if (h < 0.08 || h > 0.92)   { s = Math.min(1, s * 1.10); }
+      if (h >= 0.22 && h <= 0.42) { h -= 0.015; s = Math.min(1, s*1.15); l *= 0.96; }
+      if (h >= 0.54 && h <= 0.70) { s = Math.min(1, s*1.20); l *= 0.90; }
+      if (h < 0.08 || h > 0.92)   { s = Math.min(1, s*1.10); }
       [r, g, b] = hslToRgb(h, s, l);
       d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
     }
@@ -445,10 +360,10 @@
   function filtroClassicChrome(d) {
     for (let i = 0; i < d.length; i += 4) {
       let r = d[i], g = d[i+1], b = d[i+2];
-      r = r * 0.82 + 24; g = g * 0.82 + 22; b = b * 0.82 + 32;
+      r = r*0.82+24; g = g*0.82+22; b = b*0.82+32;
       [r, g, b] = desat(r, g, b, 0.28);
       r = scurve(r, 0.07); g = scurve(g, 0.07); b = scurve(b, 0.07);
-      const luma = (r + g + b) / 3 / 255;
+      const luma = (r+g+b)/3/255;
       if (luma < 0.45) { g += (0.45-luma)*8; b += (0.45-luma)*14; r -= (0.45-luma)*6; }
       if (luma > 0.60) { r += (luma-0.60)*10; g += (luma-0.60)*4; b -= (luma-0.60)*6; }
       d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
@@ -458,25 +373,127 @@
   function filtroClassicNeg(d) {
     for (let i = 0; i < d.length; i += 4) {
       let r = d[i], g = d[i+1], b = d[i+2];
-      r = r * 0.88 + 14; g = g * 0.88 + 12; b = b * 0.88 + 10;
+      r = r*0.88+14; g = g*0.88+12; b = b*0.88+10;
       [r, g, b] = desat(r, g, b, 0.15);
-      const luma = (r + g + b) / 3 / 255;
-      if (luma < 0.40) { const s = (0.40-luma); r -= s*10; g -= s*8; b -= s*4; }
-      if (luma >= 0.35 && luma <= 0.75) { r += 6; g += 2; b -= 5; }
-      if (luma > 0.72) { r += (luma-0.72)*16; b -= (luma-0.72)*10; }
+      const luma = (r+g+b)/3/255;
+      if (luma < 0.40) { const s=(0.40-luma); r-=s*10; g-=s*8; b-=s*4; }
+      if (luma >= 0.35 && luma <= 0.75) { r+=6; g+=2; b-=5; }
+      if (luma > 0.72) { r+=(luma-0.72)*16; b-=(luma-0.72)*10; }
       r = scurve(r, 0.09); g = scurve(g, 0.09); b = scurve(b, 0.09);
       d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
     }
   }
 
   function filtroAcros(d) {
-    const grainTable = new Float32Array(d.length / 4);
-    for (let k = 0; k < grainTable.length; k++) grainTable[k] = (Math.random() - 0.5) * 13;
+    const grain = new Float32Array(d.length/4);
+    for (let k = 0; k < grain.length; k++) grain[k] = (Math.random()-0.5)*13;
     for (let i = 0; i < d.length; i += 4) {
       let luma = 0.33*d[i] + 0.57*d[i+1] + 0.10*d[i+2];
       luma = scurve(luma, 0.18);
-      luma = clamp(luma + grainTable[i >> 2]);
+      luma = clamp(luma + grain[i>>2]);
       d[i] = d[i+1] = d[i+2] = luma;
+    }
+  }
+
+  // ── OM SYSTEM ────────────────────────────────────────────────────────────
+
+  // Nostalgic Summer — ricetta ufficiale OM System (Kyler Steele)
+  // Verdi e gialli dorati vividi, blu desaturati, cast ambrato caldo,
+  // ombre leggermente alzate, contrasto morbido. Perfetto per paesaggi estivi.
+  function filtroNostalgicSummer(d) {
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i+1], b = d[i+2];
+
+      // Lift leggero delle ombre con bias ambrato
+      r = r * 0.90 + 18;
+      g = g * 0.90 + 14;
+      b = b * 0.90 + 8;
+
+      // Contrasto morbido
+      r = scurve(r, 0.08); g = scurve(g, 0.08); b = scurve(b, 0.08);
+
+      let [h, s, l] = rgbToHsl(r, g, b);
+
+      // Verdi → vividi e leggermente più saturi (erba, foglie)
+      if (h >= 0.22 && h <= 0.42) {
+        s = Math.min(1, s * 1.30);
+        l = Math.min(1, l * 1.04);
+      }
+      // Gialli/giallo-arancio → dorati e caldi (+sat)
+      if (h >= 0.10 && h <= 0.22) {
+        h += 0.01;            // leggermente più ambrati
+        s = Math.min(1, s * 1.25);
+      }
+      // Arancioni/rossi → caldi
+      if (h >= 0.02 && h <= 0.10) {
+        s = Math.min(1, s * 1.15);
+      }
+      // Blu → desaturati e leggermente più luminosi (cieli estivi pallidi)
+      if (h >= 0.55 && h <= 0.72) {
+        s = Math.max(0, s * 0.65);
+        l = Math.min(1, l * 1.06);
+      }
+      // Cyan → leggermente desaturati
+      if (h >= 0.46 && h <= 0.55) {
+        s = Math.max(0, s * 0.80);
+      }
+
+      [r, g, b] = hslToRgb(h, s, l);
+
+      // Cast dorato globale nelle mezzotinte
+      const luma = (r+g+b)/3/255;
+      if (luma > 0.3 && luma < 0.8) {
+        r += 7; g += 3; b -= 6;
+      }
+
+      d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
+    }
+  }
+
+  // OM-Chrome — ricetta ufficiale OM System (Jonathan Paragas)
+  // Ispirato alla slide film 35mm positivo: colori saturi e punchy,
+  // contrasto marcato, ombre dense, alteluci luminose. Street e urbano.
+  function filtroOmChrome(d) {
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i+1], b = d[i+2];
+
+      // Contrasto marcato stile slide
+      r = scurve(r, 0.20); g = scurve(g, 0.20); b = scurve(b, 0.20);
+
+      let [h, s, l] = rgbToHsl(r, g, b);
+
+      // Saturazione alta globale (+50%)
+      s = Math.min(1, s * 1.50);
+
+      // Rossi/arancioni → intensi e vividi
+      if (h < 0.10 || h > 0.93) { s = Math.min(1, s*1.20); }
+
+      // Blu/viola → profondi e saturi (slide look)
+      if (h >= 0.60 && h <= 0.78) {
+        s = Math.min(1, s*1.15);
+        l *= 0.92;
+      }
+      // Verdi → vivaci ma non dominanti
+      if (h >= 0.25 && h <= 0.42) {
+        s = Math.min(1, s*1.10);
+      }
+
+      [r, g, b] = hslToRgb(h, s, l);
+
+      const luma = (r+g+b)/3/255;
+
+      // Ombre dense e leggermente fredde (stile diapo)
+      if (luma < 0.35) {
+        const str = (0.35-luma);
+        r -= str * 12; g -= str * 8; b += str * 4;
+      }
+      // Alteluci pulite e luminose
+      if (luma > 0.75) {
+        const str = (luma-0.75);
+        r += str * 10; g += str * 8; b += str * 6;
+      }
+
+      d[i] = clamp(r); d[i+1] = clamp(g); d[i+2] = clamp(b);
     }
   }
 
@@ -484,14 +501,13 @@
   btnSalva.addEventListener('click', () => {
     const suffix = currentProfilo === 'originale' ? 'originale' : currentProfilo;
     canvas.toBlob(blob => {
-      const file = new File([blob], `fuji_${suffix}.jpg`, { type: 'image/jpeg' });
+      const file = new File([blob], `${suffix}.jpg`, { type: 'image/jpeg' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], title: `Fuji ${suffix}` }).catch(() => {});
+        navigator.share({ files: [file], title: suffix }).catch(() => {});
       } else {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.download = `fuji_${suffix}.jpg`;
-        a.href = url; a.click();
+        a.download = `${suffix}.jpg`; a.href = url; a.click();
         URL.revokeObjectURL(url);
       }
     }, 'image/jpeg', 0.94);
@@ -502,11 +518,9 @@
     uploadArea.style.display = 'block';
     canvasWrap.style.display = 'none';
     profiliDiv.style.display = 'none';
-    sliderWrap.style.display = 'none';
     btnSalva.style.display   = 'none';
     resetBtn.style.display   = 'none';
     originalImageData = null;
-    filteredImageData = null;
     fileInput.value = '';
   });
 </script>
