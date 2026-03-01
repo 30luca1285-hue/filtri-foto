@@ -155,7 +155,7 @@
   <p>Tocca per caricare una foto</p>
 </div>
 
-<input type="file" id="file-input" accept="image/*" capture="environment">
+<input type="file" id="file-input" accept="image/*">
 
 <div id="canvas-wrap">
   <canvas id="canvas"></canvas>
@@ -171,7 +171,7 @@
   <button class="btn-originale active" data-profilo="originale">Originale</button>
 </div>
 
-<button id="btn-download">Salva foto</button>
+<button id="btn-download">Condividi / Salva in Foto</button>
 <span id="reset">Carica un'altra foto</span>
 
 <script>
@@ -197,8 +197,8 @@
       const img = new Image();
       img.onload = () => {
         currentImg = img;
-        // Risoluzione max 1600px sul lato lungo per performance
-        const maxDim = 1600;
+        // Risoluzione max 3000px sul lato lungo
+        const maxDim = 3000;
         let w = img.naturalWidth, h = img.naturalHeight;
         if (w > maxDim || h > maxDim) {
           const r = Math.min(maxDim / w, maxDim / h);
@@ -390,13 +390,27 @@
     }
   }
 
-  // ── Download ─────────────────────────────────────────────────────────────
+  // ── Salva / Condividi ────────────────────────────────────────────────────
   btnDownload.addEventListener('click', () => {
     const suffix = currentProfilo === 'originale' ? 'originale' : currentProfilo;
-    const link = document.createElement('a');
-    link.download = `foto_${suffix}.jpg`;
-    link.href = canvas.toDataURL('image/jpeg', 0.94);
-    link.click();
+    const filename = `foto_${suffix}.jpg`;
+
+    canvas.toBlob(blob => {
+      // iOS Safari 15+: Web Share API → apre foglio condivisione → "Salva immagine"
+      if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: 'image/jpeg' })] })) {
+        const file = new File([blob], filename, { type: 'image/jpeg' });
+        navigator.share({ files: [file], title: filename })
+          .catch(() => {}); // l'utente ha annullato
+      } else {
+        // Fallback desktop: download diretto
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    }, 'image/jpeg', 0.94);
   });
 
   // ── Reset ────────────────────────────────────────────────────────────────
